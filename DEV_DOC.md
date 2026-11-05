@@ -6,7 +6,7 @@
 
 - Debian/Ubuntu VM with `sudo`
 - Docker Engine and the Docker Compose plugin (`docker compose version`)
-- `make`, `openssl`
+- `make`
 - Your user in the `docker` group: `sudo usermod -aG docker $USER` (then log in again)
 
 ### Configuration files
@@ -28,9 +28,9 @@
 
 ### Secrets
 
-Stored in `secrets/` at the repository root (git-ignored). `make` creates any missing
-file with a random password, so nothing must be done by hand. To choose your own
-values, create them before the first `make`:
+Stored in `secrets/` at the repository root (git-ignored). These files are not
+generated: create them by hand before the first `make`. `make` stops with an error if
+one of them is missing or empty.
 
 ```
 secrets/db_root_password.txt   # one line: MariaDB root password
@@ -51,7 +51,7 @@ echo "127.0.0.1 huozturk.42.fr" | sudo tee -a /etc/hosts
 ## Build and launch
 
 ```sh
-make            # = make up: create data folders + secrets, then
+make            # = make up: create data folders, check secrets, then
                 #   docker compose -f srcs/docker-compose.yml up -d --build
 make re         # full rebuild from zero (deletes data)
 ```

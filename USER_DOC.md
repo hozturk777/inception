@@ -47,8 +47,8 @@ accept it to continue. Plain `http://` (port 80) is intentionally not available.
 cat secrets/credentials.txt
 ```
 
-The `secrets/` folder is created automatically by `make` with random passwords and is
-never committed to git. Passwords are applied only when the site is first installed;
+The `secrets/` folder is created by hand before the first `make` (see
+[DEV_DOC.md](DEV_DOC.md)) and is never committed to git. Passwords are applied only when the site is first installed;
 to change one afterwards, change it in the WordPress admin panel (Users → Profile), or
 reset everything with `make fclean && make` (this deletes all site data).
 

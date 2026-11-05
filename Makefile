@@ -1,34 +1,23 @@
 include srcs/.env
 
 COMPOSE		= docker compose -f srcs/docker-compose.yml
-SECRETS_DIR	= secrets
-SECRETS		= $(SECRETS_DIR)/db_root_password.txt \
-			  $(SECRETS_DIR)/db_password.txt \
-			  $(SECRETS_DIR)/credentials.txt
-
-# Random alphanumeric password (no quotes/special chars to break SQL or shell)
-GEN_PASS	= openssl rand -base64 32 | tr -dc 'A-Za-z0-9' | cut -c1-20
+SECRETS		= secrets/db_root_password.txt \
+			  secrets/db_password.txt \
+			  secrets/credentials.txt
 
 all: up
 
-up: dirs $(SECRETS)
+up: dirs check-secrets
 	$(COMPOSE) up -d --build
 
 dirs:
 	mkdir -p $(DATA_PATH)/mariadb $(DATA_PATH)/wordpress
 
-# Secrets are created only if missing, never overwritten
-$(SECRETS_DIR)/db_root_password.txt $(SECRETS_DIR)/db_password.txt:
-	@mkdir -p $(SECRETS_DIR)
-	@$(GEN_PASS) > $@
-	@chmod 600 $@
-	@echo "Generated $@"
-
-$(SECRETS_DIR)/credentials.txt:
-	@mkdir -p $(SECRETS_DIR)
-	@printf "WP_ADMIN_PASSWORD=%s\nWP_USER_PASSWORD=%s\n" "$$($(GEN_PASS))" "$$($(GEN_PASS))" > $@
-	@chmod 600 $@
-	@echo "Generated $@"
+# Secrets are written by hand (see DEV_DOC.md); stop if one is missing or empty
+check-secrets:
+	@for f in $(SECRETS); do \
+		[ -s "$$f" ] || { echo "Error: $$f is missing or empty (see DEV_DOC.md)" >&2; exit 1; }; \
+	done
 
 down:
 	$(COMPOSE) down
@@ -55,4 +44,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all up dirs down stop start ps logs clean fclean re
+.PHONY: all up dirs check-secrets down stop start ps logs clean fclean re
