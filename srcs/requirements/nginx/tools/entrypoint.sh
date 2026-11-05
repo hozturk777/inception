@@ -7,7 +7,7 @@ if [ ! -f /etc/nginx/ssl/inception.crt ]; then
     openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
         -keyout /etc/nginx/ssl/inception.key \
         -out /etc/nginx/ssl/inception.crt \
-        -subj "/C=TR/ST=Istanbul/L=Istanbul/O=42/CN=${DOMAIN_NAME}"
+        -subj "/C=TR/ST=Kocaeli/L=Gebze/O=42/CN=${DOMAIN_NAME}"
 fi
 
 # Only ${DOMAIN_NAME} is substituted; nginx variables like $uri stay untouched
